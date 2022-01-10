@@ -17,6 +17,8 @@
     "typescript": "^4.5.4"
   },
   "dependencies": {
-    "isomorphic-fetch": "^3.0.0"
+    "csv-writer": "^1.6.0",
+    "isomorphic-fetch": "^3.0.0",
+    "node-create-csv": "^1.0.0"
   }
 }
