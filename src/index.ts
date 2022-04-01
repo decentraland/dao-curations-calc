@@ -54,7 +54,23 @@ async function main() {
     //Shibu Old
     '0x399a44f5821b1f859bc236e14367c4f7c36933fb': 0,
     //Kat
-    '0x967fb0c36e4f5288f30fb05f8b2a4d7b77eaca4b': 0
+    '0x967fb0c36e4f5288f30fb05f8b2a4d7b77eaca4b': 0,
+    //Sango
+    '0x5e382071464a6f9ea29708a045983dc265b0d86d': 0,
+    //Grimey
+    '0xc8ad6322821b51da766a4b2a82b39fb72b53d276': 0,
+    //AndreusAs
+    '0xa8c7d5818a255a1856b31177e5c96e1d61c83991': 0,
+    //Mitch
+    '0x336685bb3a96e13b77e909d7c52e8afcff1e859e': 0,
+    //Kristian
+    '0x41eb5f82af60873b3c14fedb898a1712f5c35366': 0,
+    //James Guard
+    '0x470c33abd57166940095d59bd8dd573cbae556c3': 0,
+    //Fabeeo
+    '0x1dec5f50cb1467f505bb3ddfd408805114406b10': 0,
+    //Yannakis
+    '0x805797df0c0d7d70e14230b72e30171d730da55e': 0,
   }
   for (const collection of collectionsList) {
     curators[collection[1].curator.id] += collection[1].collection.itemsCount
@@ -75,6 +91,14 @@ const names: { [curator: string]: string } = {
   '0x91e222ed7598efbcfe7190481f2fd14897e168c8': 'Chestnutbruze',
   '0x399a44f5821b1f859bc236e14367c4f7c36933fb': 'Shibu Old',
   '0x967fb0c36e4f5288f30fb05f8b2a4d7b77eaca4b': 'Kat',
+  '0x5e382071464a6f9ea29708a045983dc265b0d86d': 'Sango',
+  '0xc8ad6322821b51da766a4b2a82b39fb72b53d276': 'Grimey',
+  '0xa8c7d5818a255a1856b31177e5c96e1d61c83991': 'AndreusAs',
+  '0x336685bb3a96e13b77e909d7c52e8afcff1e859e': 'Mitch',
+  '0x41eb5f82af60873b3c14fedb898a1712f5c35366': 'Kristian',
+  '0x470c33abd57166940095d59bd8dd573cbae556c3': 'James Guard ',
+  '0x1dec5f50cb1467f505bb3ddfd408805114406b10': 'Fabeeo',
+  '0x805797df0c0d7d70e14230b72e30171d730da55e': 'Yannakis',
 }
 
 function exportCurations(collectionsList: [string, Curation][]) {
