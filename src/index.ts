@@ -3,16 +3,16 @@ import { createObjectCsvWriter } from 'csv-writer'
 
 async function main() {
   const curationsList: Curation[] = []
+  let timestamp = '0';
 
   while (true) {
-    const skip = curationsList.length
     const res = await fetch(
       'https://api.thegraph.com/subgraphs/name/decentraland/collections-matic-mainnet',
       {
         headers: {
           'content-type': 'application/json'
         },
-        body: `{\"query\":\"{\\n  curations(orderBy: timestamp, orderDirection: asc, first: 1000, skip: ${skip}, block: {number: 23312692}) {\\n    curator {\\n      id\\n    }\\n    collection {\\n      id\\n      itemsCount\\n      name\\n    }\\n    isApproved\\n    timestamp\\n    txHash\\n  }\\n}\\n\",\"variables\":null}`,
+        body: `{\"query\":\"{\\n  curations(orderBy: timestamp, orderDirection: asc, first: 1000, where: { timestamp_gte: ${timestamp} }, block: { number: 25696595 }) {\\n    curator {\\n      id\\n    }\\n    collection {\\n      id\\n      itemsCount\\n      name\\n    }\\n    isApproved\\n    timestamp\\n    txHash\\n  }\\n}\\n\",\"variables\":null}`,
         method: 'POST'
       }
     )
@@ -22,6 +22,11 @@ async function main() {
       break
     }
     curationsList.push(...json.data.curations)
+
+    if (timestamp == json.data.curations.slice(-1)[0].timestamp) {
+      break;
+    }
+    timestamp = curationsList.slice(-1)[0].timestamp;
   }
   const collectionsList: [string, Curation][] = []
   curationsList.sort((a, b) => {
