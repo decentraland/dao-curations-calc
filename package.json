@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "csv-writer": "^1.6.0",
+    "ethers": "^5.6.2",
     "isomorphic-fetch": "^3.0.0",
     "node-create-csv": "^1.0.0"
   }
