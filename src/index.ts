@@ -1,24 +1,22 @@
-import { ethers } from 'ethers';
+import { ethers } from 'ethers'
 import fetch from 'isomorphic-fetch'
 import { createObjectCsvWriter } from 'csv-writer'
 
 async function main() {
   const curationsList: Curation[] = []
-  const blocknumer = 31690000;
-  let timestamp = '0';
+  const blocknumer = 30877000
+  let timestamp = '0'
 
   while (true) {
-    const res = await fetch(
-      'https://api.thegraph.com/subgraphs/name/decentraland/collections-matic-mainnet',
-      {
-        headers: {
-          'content-type': 'application/json'
-        },
-        body: `{\"query\":\"{\\n  curations(orderBy: timestamp, orderDirection: asc, first: 1000, where: { timestamp_gte: ${timestamp} }, block: { number: ${blocknumer} }) {\\n    curator {\\n      id\\n    }\\n    collection {\\n      id\\n      itemsCount\\n      name\\n    }\\n    isApproved\\n    timestamp\\n    txHash\\n  }\\n}\\n\",\"variables\":null}`,
-        method: 'POST'
-      }
-    )
+    const res = await fetch('https://api.thegraph.com/subgraphs/name/decentraland/collections-matic-mainnet', {
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: `{\"query\":\"{\\n              curations(orderBy: timestamp, orderDirection: asc, first: 1000, where: { timestamp_gte: ${timestamp} }, block: { number: ${blocknumer} }) {\\n                curator {\\n                  id\\n              }\\n              collection {\\n                id\\n                createdAt\\n                itemsCount\\n                name\\n                items {\\n                  creationFee\\n                }\\n              }\\n              isApproved\\n              timestamp\\n              txHash\\n          }\\n        }\",\"variables\":null}`,
+      method: 'POST'
+    })
     const json = await res.json()
+
 
     if (!json.data.curations.length) {
       break
@@ -26,9 +24,9 @@ async function main() {
     curationsList.push(...json.data.curations)
 
     if (timestamp == json.data.curations.slice(-1)[0].timestamp) {
-      break;
+      break
     }
-    timestamp = curationsList.slice(-1)[0].timestamp;
+    timestamp = curationsList.slice(-1)[0].timestamp
   }
   const collectionsList: [string, Curation][] = []
   curationsList.sort((a, b) => {
@@ -43,7 +41,7 @@ async function main() {
   }
 
   console.log(collectionsList.length)
-  exportCurations(collectionsList);
+  await exportCurations(collectionsList)
 
   const curators: { [curator: string]: number } = {
     //Lau
@@ -79,16 +77,16 @@ async function main() {
     //Yannakis Old
     '0x805797df0c0d7d70e14230b72e30171d730da55e': 0,
     // Yannakis
-    '0x5ce9fb617333b8c5a8f7787710f7c07002cb3516': 0,
+    '0x5ce9fb617333b8c5a8f7787710f7c07002cb3516': 0
   }
   for (const collection of collectionsList) {
     curators[collection[1].curator.id] += collection[1].collection.itemsCount
   }
 
-  console.log("Total Curations");
-  console.log(curators);
+  console.log('Total Curations')
+  console.log(curators)
 
-  const lastTotal : { [curator: string]: number } = {
+  const lastTotal: { [curator: string]: number } = {
     '0x5d7846007c1dd6dca25d16ce2f71ec13bcdcf6f0': 251,
     '0x716954738e57686a08902d9dd586e813490fee23': 133,
     '0x7a3891acf4f3b810992c4c6388f2e37357d7d3ab': 374,
@@ -105,36 +103,35 @@ async function main() {
     '0x470c33abd57166940095d59bd8dd573cbae556c3': 52,
     '0x1dec5f50cb1467f505bb3ddfd408805114406b10': 242,
     '0x805797df0c0d7d70e14230b72e30171d730da55e': 1213,
-    '0x5ce9fb617333b8c5a8f7787710f7c07002cb3516': 0,
-  };
-  const newTotal : { [curator: string]: number } = {};
-  const newPayment : { [curator: string]: number } = {};
-  var newPamentCSV = 'token_type,token_address,receiver,amount\n';
+    '0x5ce9fb617333b8c5a8f7787710f7c07002cb3516': 0
+  }
+  const newTotal: { [curator: string]: number } = {}
+  const newPayment: { [curator: string]: number } = {}
+  let newPamentCSV = 'token_type,token_address,receiver,amount\n'
 
-  const curatorsAddresses = Object.keys(curators);
-  for(var i = 0; i < curatorsAddresses.length; i++) {
-    let address = String(curatorsAddresses[i]);
-    newTotal[address] = curators[address] - lastTotal[address];
+  const curatorsAddresses = Object.keys(curators)
+  for (let i = 0; i < curatorsAddresses.length; i++) {
+    const address = String(curatorsAddresses[i])
+    newTotal[address] = curators[address] - lastTotal[address]
 
     if (newTotal[address] > 0) {
-      let paddress = ethers.utils.getAddress(paymentAddress[address]);
-      newPayment[paddress] = newTotal[address] * 10;
-      newPamentCSV += `erc20,0x0F5D2fB29fb7d3CFeE444a200298f468908cC942,${paddress},${newPayment[paddress]}\n`;
+      const paddress = ethers.utils.getAddress(paymentAddress[address])
+      newPayment[paddress] = newTotal[address] * 10
+      newPamentCSV += `erc20,0x0F5D2fB29fb7d3CFeE444a200298f468908cC942,${paddress},${newPayment[paddress]}\n`
     }
   }
 
-  console.log('New Total');
-  console.log(newTotal);
+  console.log('New Total')
+  console.log(newTotal)
 
-  console.log('New Payment');
-  console.log(newPayment);
+  console.log('New Payment')
+  console.log(newPayment)
 
-  console.log('=== CSV For Gnosis Transfer ===');
-  console.log(newPamentCSV);
+  console.log('=== CSV For Gnosis Transfer ===')
+  console.log(newPamentCSV)
 }
 
 void main()
-
 
 const names: { [curator: string]: string } = {
   '0x5d7846007c1dd6dca25d16ce2f71ec13bcdcf6f0': 'Lau',
@@ -153,7 +150,7 @@ const names: { [curator: string]: string } = {
   '0x470c33abd57166940095d59bd8dd573cbae556c3': 'James Guard ',
   '0x1dec5f50cb1467f505bb3ddfd408805114406b10': 'Fabeeo',
   '0x805797df0c0d7d70e14230b72e30171d730da55e': 'Yannakis Old',
-  '0x5ce9fb617333b8c5a8f7787710f7c07002cb3516': 'Yannakis',
+  '0x5ce9fb617333b8c5a8f7787710f7c07002cb3516': 'Yannakis'
 }
 
 const paymentAddress: { [curator: string]: string } = {
@@ -172,35 +169,35 @@ const paymentAddress: { [curator: string]: string } = {
   '0x41eb5f82af60873b3c14fedb898a1712f5c35366': '0x41eb5F82af60873b3C14fEDB898A1712f5c35366',
   '0x470c33abd57166940095d59bd8dd573cbae556c3': '0x470c33aBD57166940095d59BD8Dd573cBae556c3',
   '0x1dec5f50cb1467f505bb3ddfd408805114406b10': '0x1DeC5f50cB1467F505BB3ddFD408805114406b10',
-  '0x805797df0c0d7d70e14230b72e30171d730da55e': '0x805797Df0c0d7D70E14230b72E30171d730DA55e',
-  '0x5ce9fb617333b8c5a8f7787710f7c07002cb3516': '0x5ce9fb617333b8c5a8f7787710f7c07002cb3516',
+  '0x805797df0c0d7d70e14230b72e30171d730da55e': '0x5ce9fb617333b8c5a8f7787710f7c07002cb3516',
+  '0x5ce9fb617333b8c5a8f7787710f7c07002cb3516': '0x5ce9fb617333b8c5a8f7787710f7c07002cb3516'
 }
 
-function exportCurations(collectionsList: [string, Curation][]) {
+async function exportCurations(collectionsList: [string, Curation][]) {
   const csvWriter = createObjectCsvWriter({
     path: 'curations.csv',
     header: [
-      {id: 'curatorAddress', title: 'Curator Address'},
-      {id: 'curatorName', title: 'Curators Name'},
-      {id: 'collectionId', title: 'Collection ID'},
-      {id: 'collectionName', title: 'Collection Name'},
-      {id: 'collectionItems', title: 'Collection Items'},
-      {id: 'timestamp', title: 'Timestamp'},
+      { id: 'curatorAddress', title: 'Curator Address' },
+      { id: 'curatorName', title: 'Curators Name' },
+      { id: 'collectionId', title: 'Collection ID' },
+      { id: 'collectionName', title: 'Collection Name' },
+      { id: 'collectionItems', title: 'Collection Items' },
+      { id: 'timestamp', title: 'Timestamp' }
     ]
-  });
+  })
 
-const data = collectionsList.map(([id, curation]) => {
+  const data = collectionsList.map(([id, curation]) => {
     return {
       curatorAddress: curation.curator.id,
       curatorName: names[curation.curator.id],
       collectionId: curation.collection.id,
       collectionName: curation.collection.name,
       collectionItems: curation.collection.itemsCount,
-      timestamp: curation.timestamp,
+      timestamp: curation.timestamp
     }
-  });
+  })
 
-  csvWriter.writeRecords(data).then(()=> console.log('The CSV file was written successfully'));
+  await csvWriter.writeRecords(data).then(() => console.log('The CSV file was written successfully'))
 }
 
 interface Curation {
