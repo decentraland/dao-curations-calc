@@ -11,7 +11,7 @@ async function main() {
       headers: {
         'content-type': 'application/json'
       },
-      body: `{\"query\":\"{\\n    curations(orderBy: timestamp, orderDirection: asc, skip: ${curationsList.length}, first: 1000, where: { timestamp_gte: 1658153853 } ) {\\n      curator {\\n        id\\n      }\\n      collection {\\n        id\\n        createdAt\\n        itemsCount\\n        name\\n        items {\\n          creationFee\\n        }\\n        isApproved\\n        }\\n    }\\n            }\",\"variables\":null}`,
+      body: `{\"query\":\"{\\n    curations(orderBy: timestamp, orderDirection: asc, skip: ${curationsList.length}, first: 1000, where: { timestamp_gte: 1658153853 } ) {\\ntimestamp      curator {\\n        id\\n      }\\n      collection {\\n        id\\n        createdAt\\n        itemsCount\\n        name\\n        items {\\n          creationFee\\n        }\\n        isApproved\\n        }\\n    }\\n            }\",\"variables\":null}`,
       method: 'POST'
     })
     const json = await res.json()
