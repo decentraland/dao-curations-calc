@@ -89,10 +89,12 @@ async function exportCurations(collectionsList: [string, Curation][]) {
       timestamp: curation.timestamp,
       fee: new BigNumber(curation.collection.itemsCount)
         .multipliedBy(new BigNumber(curation.collection.items[0].creationFee))
-        .toFixed(),
+        .div(new BigNumber(10).pow(18))
+        .toFixed(8, BigNumber.ROUND_FLOOR),
       paidFree: new BigNumber(curation.collection.itemsCount)
         .multipliedBy(new BigNumber(curation.collection.items[0].creationFee).dividedBy(new BigNumber(3)))
-        .toFixed(0, BigNumber.ROUND_FLOOR)
+        .div(new BigNumber(10).pow(18))
+        .toFixed(8, BigNumber.ROUND_FLOOR)
     }
   })
 
