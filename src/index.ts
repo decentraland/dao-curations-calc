@@ -73,7 +73,9 @@ async function exportCurations(collectionsList: [string, Curation][]) {
       { id: 'collectionId', title: 'Collection ID' },
       { id: 'collectionName', title: 'Collection Name' },
       { id: 'collectionItems', title: 'Collection Items' },
-      { id: 'timestamp', title: 'Timestamp' }
+      { id: 'timestamp', title: 'Timestamp' },
+      { id: 'fee', title: 'Collection fee' },
+      { id: 'paidFree', title: 'Paid fee' }
     ]
   })
 
@@ -84,7 +86,13 @@ async function exportCurations(collectionsList: [string, Curation][]) {
       collectionId: curation.collection.id,
       collectionName: curation.collection.name,
       collectionItems: curation.collection.itemsCount,
-      timestamp: curation.timestamp
+      timestamp: curation.timestamp,
+      fee: new BigNumber(curation.collection.itemsCount)
+        .multipliedBy(new BigNumber(curation.collection.items[0].creationFee))
+        .toFixed(),
+      paidFree: new BigNumber(curation.collection.itemsCount)
+        .multipliedBy(new BigNumber(curation.collection.items[0].creationFee).dividedBy(new BigNumber(3)))
+        .toFixed(0, BigNumber.ROUND_FLOOR)
     }
   })
 
