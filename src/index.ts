@@ -54,6 +54,7 @@ async function main() {
       total = total.plus(element)
       newPamentCSV += `erc20,0x0F5D2fB29fb7d3CFeE444a200298f468908cC942,${curators[curator].paymentAddress},${element
         .div(new BigNumber(10).pow(18))
+        .minus(curators[curator].alreadyPaid)
         .toPrecision(8)}\n`
     }
   }
