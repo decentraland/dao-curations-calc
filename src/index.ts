@@ -144,7 +144,6 @@ async function exportCurations(path: string, collectionsList: Curation[]) {
         name: curation.collection.name,
         itemsCount: curation.collection.itemsCount
       } as any)
-        .times(curation.collection.itemsCount)
         .div(wei)
         .toFixed(8, BigNumber.ROUND_FLOOR)
     }
